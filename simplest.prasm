@@ -1,0 +1,19 @@
+#simple prasm code for debugging purposes
+#basic fan-in
+
+.code
+lid         $r0             # id
+li          $r3,0           # result accumulator
+li          $r4,0           # r4 = 0 to compare id with
+li          $r5,0           # counter to stop loop
+li          $r6,4
+
+loop:
+andi        $r1,$r0,1
+addi        $r3,$r3,1       #check if last bit of r3 = 1
+bne         $r1,$r4,end
+sri         $r0,$r0,1
+addi        $r5,$r5,1
+bne         $r5,$r6,loop
+end:
+halt

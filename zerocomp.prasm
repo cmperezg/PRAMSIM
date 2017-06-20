@@ -1,0 +1,44 @@
+#Program to check if an array is all zeros in parallel
+#res[0] will hold result. 0 if all are zero and 1 otherwise
+
+#this code has problems
+
+.data
+bfw:  .word   5
+array:  .word   0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+res:    .space  32
+
+.code
+li      $r0,0           #r0 = 0
+lid     $r1             #r1 = PID
+li      $r2,array       #r2 = array address
+li      $r3,res         #r3 = answer array address
+add     $r4,$r2,$r1     #address of element to check
+lw      $r9,$r4,0
+add     $r4,$r3,$r1     #address to store comparison
+beq     $r5,$r0,eq      #if = 0, save a 0, otherwise save a 1
+li      $r9,1
+sw      $r9,$r4,0
+j       fanin
+eq:
+li      $r9,0
+sw      $r9,$r4,0
+fanin:
+li      $r5,1           #c = 1
+lid     $r6             #modifiable id
+li      $r11,bfw
+lw      $r11,$r11,0
+loop:
+andi    $r7,$r6,1
+bne     $r7,$r0,end
+add     $r8,$r4,$r5     #address to be fanned in
+lw      $r7,$r8,0
+or      $r10,$r7,$r9
+sw      $r10,$r4,0
+sli     $r5,$r5,1       #c = c<<1
+sri     $r6,$r6,1       #id = id>>1
+addi    $r0,$r0,1           #counter for fanin
+beq     $r11,$r0,end
+j       loop
+end:
+halt
